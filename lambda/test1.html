@@ -1,0 +1,50 @@
+<html lang="ja"
+	prefix="og: https://ogp.me/ns#" >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>API AJAX REQUEST</title>
+ 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script type="text/javascript">
+ 
+            $(function() {
+ 
+                var URL = "https://b607xwix0h.execute-api.ap-northeast-1.amazonaws.com/dev/hello-world-python";
+ 
+                $("#submit").click(function() {
+                    $("#submit").attr("disabled", "disabled");
+					$.ajax({
+					    type: "GET",
+                        url: URL, 
+					}).success(function(data) {
+					    alert(data.message);
+					}).error(function(XMLHttpRequest, textStatus, errorThrown) {
+					    alert('error!!!');
+						console.log("XMLHttpRequest : " + XMLHttpRequest.status);
+						console.log("textStatus     : " + textStatus);
+						console.log("errorThrown    : " + errorThrown.message);
+					});
+                });
+ 
+            });
+ 
+        </script>
+ 
+    </head>
+ 
+    <body>
+    <div>
+        <h1>AJAX REQUEST</h1>
+        <div>
+            API Gatewayの該当エンドポイントにAjaxリクエスト（GET）を投げます。
+        </div>
+        <table border=0>
+            <tr>
+                <td></td>
+                <td><button id='submit'>実行</button></td>
+            </tr>
+        </table>
+    </div>
+ 
+    </body>
+</HTML>
