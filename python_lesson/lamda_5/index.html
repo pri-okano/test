@@ -1,0 +1,103 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script>
+// 追加ここから
+// アップロードファイルが変更されたときの処理
+function imageload() {
+	// File APIを使ってファイル操作する
+	// アップロードされた1つめの画像を取得
+	var file = $('#uploadimage')[0].files[0];
+	if (!file.type.match(/^image\/jpe?g$/)){
+		alert("対応するファイルはJPEG形式のみです。");
+		return;
+	}
+
+	// File APIを使ってファイルを読み取る
+	var imgreader = new FileReader();
+	// 読み込みが完了したときに、その画像を画面に表示するように構成する
+	imgreader.onload = function(event) {
+		var src =  imgreader.result;
+		$('#preview').attr('src', src);
+	};
+	// 読み取りを開始する
+	imgreader.readAsDataURL(file);
+}
+// 追加ここまで
+
+// ★変更箇所1★　API Gatewayのエンドポイントに変更してください
+var posturl = "https://uo3ihvjyu8.execute-api.ap-northeast-1.amazonaws.com/prod/keijiwrite";
+function postkeiji() {
+	// 投稿処理を変更する
+	// アップロードされた1つめの画像を取得
+	var file = $('#uploadimage')[0].files[0];
+    if (file) {
+    	// ファイルがアップロードされているとき
+		var reader = new FileReader();
+		reader.onload = function(event) {
+		    // 読み込んだファイルデータを取得する
+			var src = event.target.result;
+			// データとして「image」を追加
+			var data = {
+				name : $('#name').val(),
+				msg : $('#msg').val(),
+				image : src.split(',')[1]
+			};
+			// 残りの処理は同じ
+			var postdata = JSON.stringify(data);
+			$.ajax({
+				type : 'POST',
+				url : posturl,
+				data : postdata
+			}).done(function(response) {
+				// 成功した
+				// リロード
+				location.reload();
+			}).fail(function(response, textStatus) {
+				alert("エラー" + textStatus);
+			});
+		}
+		reader.readAsDataURL(file);
+	} else {
+		// アップロードされていないとき（第4回目と同じ）
+		var data = {
+			name : $('#name').val(),
+			msg : $('#msg').val()
+		};
+		var postdata = JSON.stringify(data);
+		$.ajax({
+			type : 'POST',
+			url : posturl,
+			data : postdata
+		}).done(function(response) {
+			// 成功した
+			// リロード
+			location.reload();
+		}).fail(function(response, textStatus) {
+			alert("エラー" + textStatus);
+		});;		
+	}
+	return false;
+}
+</script>
+</head>
+<body>
+
+<form>
+お名前：<input type="text" id="name"><br>
+投稿内容：<textarea id="msg" cols="40" rows="5"></textarea><br>
+<!-- 画像のアップロードここから -->
+<input type="file" id="uploadimage" onchange="imageload();">
+<img id='preview' width="320px">
+<!-- 画像のアップロードここまで -->
+<button type="button" onclick="postkeiji();">投稿</button><br>
+</form>
+
+<!-- 表示部分（前回作成したものを埋め込む） -->
+<!-- ★変更箇所2★　API Gatewayのエンドポイントに変更してください -->
+<iframe src="https://s4ovri4e59.execute-api.ap-northeast-1.amazonaws.com/prod/keijiread" width="600" height="400"></iframe>
+
+
+</body>
+</html>

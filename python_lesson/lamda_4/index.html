@@ -1,0 +1,43 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="http://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script>
+// ★変更箇所1★　API Gatewayのエンドポイントに変更してください
+var posturl = "https://uo3ihvjyu8.execute-api.ap-northeast-1.amazonaws.com/prod/keijiwrite";
+function postkeiji() {
+	var data = {
+		name : $('#name').val(),
+		msg : $('#msg').val()
+	};
+	var postdata = JSON.stringify(data);
+	$.ajax({
+		type : 'POST',
+		url : posturl,
+		data : postdata
+	}).done(function(response) {
+		// 成功した
+		// リロード
+		location.reload();
+	}).fail(function(response, textStatus) {
+		alert("エラー" + textStatus);
+	});
+	return false;
+}
+</script>
+</head>
+<body>
+
+<form>
+お名前：<input type="text" id="name"><br>
+投稿内容：<textarea id="msg" cols="40" rows="5"></textarea><br>
+<button type="button" onclick="postkeiji();">投稿</button>
+</form>
+
+<!-- 表示部分（前回作成したものを埋め込む） -->
+<!-- ★変更箇所2★　API Gatewayのエンドポイントに変更してください -->
+<iframe src="https://s4ovri4e59.execute-api.ap-northeast-1.amazonaws.com/prod/keijiread" width="600" height="400"></iframe>
+
+
+</body>
+</html>
