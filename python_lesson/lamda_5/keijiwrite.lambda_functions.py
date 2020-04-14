@@ -6,12 +6,12 @@ import base64
 dynamodb = boto3.resource('dynamodb')
 
 def lambda_handler(event, context):
-    # “n‚³‚ê‚½ƒf[ƒ^‚ğæ“¾
+    # æ¸¡ã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
     body = json.loads(event['body'])
     name = body['name']
     msg = body['msg']
     
-    # ˜A”Ô‚ğXV‚È‚ç‚Ñ‚Éæ“¾
+    # é€£ç•ªã‚’æ›´æ–°ãªã‚‰ã³ã«å–å¾—
     seqtable = dynamodb.Table('sequence')
     response = seqtable.update_item(
         Key={ 'tablename' : 'keijiban' },
@@ -24,22 +24,22 @@ def lambda_handler(event, context):
     nextval = response['Attributes']['seq']
 
     hasimage = 0
-    # ‰æ‘œ‚Ìˆ—‚ğ’Ç‰Á
+    # ç”»åƒã®å‡¦ç†ã‚’è¿½åŠ 
     if 'image' in body :
-        # 1. ƒtƒ@ƒCƒ‹–¼iXXXXXX.jpgj
+        # 1. ãƒ•ã‚¡ã‚¤ãƒ«åï¼ˆXXXXXX.jpgï¼‰
         filename = str(nextval) + ".jpg"
-        # 2. base64ƒfƒR[ƒh‚·‚é
+        # 2. base64ãƒ‡ã‚³ãƒ¼ãƒ‰ã™ã‚‹
         data = base64.b64decode(body['image'])
-        # 3. S3‚É‘‚«‚Ş
+        # 3. S3ã«æ›¸ãè¾¼ã‚€
         s3 = boto3.resource('s3')
-        # šš ƒoƒPƒbƒg–¼‚Í‘‚«Š·‚¦‚Ä‚­‚¾‚³‚¢ šš
+        # â˜…â˜… ãƒã‚±ãƒƒãƒˆåã¯æ›¸ãæ›ãˆã¦ãã ã•ã„ â˜…â˜…
         target = s3.Object('webexample000000', filename)
         target.put(Body = data)
         hasimage = 1
-    # ‰æ‘œ‚Ìˆ—‚±‚±‚Ü‚Å
+    # ç”»åƒã®å‡¦ç†ã“ã“ã¾ã§
 
 
-    # Œf¦”Âƒf[ƒ^‚Ì‘‚«‚İ
+    # æ²ç¤ºæ¿ãƒ‡ãƒ¼ã‚¿ã®æ›¸ãè¾¼ã¿
     keijiban = dynamodb.Table('keijiban')
     keijiban.put_item(
         Item = {
